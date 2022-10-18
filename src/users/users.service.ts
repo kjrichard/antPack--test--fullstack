@@ -25,6 +25,9 @@ export class UsersService {
 
   async createAllUsers() {
     try {
+      let userData = await this.userRepository.find({});
+      if (userData.length) 
+        return userData;
       const url = 'http://jsonplaceholder.typicode.com/users';
       await axios.get(url).then( async ( response ) => {
         response.data.forEach( async ( element ) => {
@@ -69,6 +72,8 @@ export class UsersService {
   } 
 
   async create(createUserDto: CreateUserDto) {
+    console.log(createUserDto);
+    
     try {
       
       const user = this.userRepository.create( createUserDto );
@@ -114,15 +119,15 @@ export class UsersService {
       id: id,
       ...updateUserDto
     });
-
-    if( !user ) throw new NotFoundException(`User with id ${ id } not found`);
+  
+     if( !user ) throw new NotFoundException(`User with id ${ id } not found`);
 
     try {
       await this.userRepository.save( user );
       return user;
     } catch (error) {
       this.handleExceptions( error );
-    }
+    } 
   
   }
 
